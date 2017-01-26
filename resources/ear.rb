@@ -1,17 +1,17 @@
 resource_name :ear
 property :file, kind_of: String, name_property: true
 
-load_current_value do
-  if ::File.exists?("#{node['jboss']['home']}/#{node['jboss']['installation_type']}/deployments/#{file}")
-    if ! Dir["#{node['jboss']['home']}/#{node['jboss']['installation_type']}/deployments/#{file}.*"].empty?
-      Dir["#{node['jboss']['home']}/#{node['jboss']['installation_type']}/deployments/#{file}.*"].first.split('.').last
-    else
-      return 'not_deployed'
-    end
-  else
-    return 'not_deployed'
-  end
-end
+#load_current_value do
+#  if ::File.exists?("#{node['jboss']['home']}/#{node['jboss']['installation_type']}/deployments/#{file}")
+#    if ! Dir["#{node['jboss']['home']}/#{node['jboss']['installation_type']}/deployments/#{file}.*"].empty?
+#      Dir["#{node['jboss']['home']}/#{node['jboss']['installation_type']}/deployments/#{file}.*"].first.split('.').last
+#    else
+#      return 'not_deployed'
+#    end
+#  else
+#    return 'not_deployed'
+#  end
+#end
 
 action :deploy do
   puts "Deploying #{::File.basename(file)}"
