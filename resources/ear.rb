@@ -21,8 +21,8 @@ action :deploy do
     mode '0600'
     content lazy { ::File.open(file).read }
   end
-  while Dir("#{node['jboss']['home']}/#{node['jboss']['installation_type']}/#{file}.deployed").empty?
-    status = Dir("#{node['jboss']['home']}/#{node['jboss']['installation_type']}/#{file}.*").first.split['.'].last
+  while Dir["#{node['jboss']['home']}/#{node['jboss']['installation_type']}/#{file}.deployed"].empty?
+    status = Dir["#{node['jboss']['home']}/#{node['jboss']['installation_type']}/#{file}.*"].first.split['.'].last
     puts status
     raise if status == 'failed'
     sleep 5
@@ -34,7 +34,7 @@ action :undeploy do
   file file do
     :delete
   end
-  while Dir("#{node['jboss']['home']}/#{node['jboss']['installation_type']}/#{file}.undeployed").empty?
+  while Dir["#{node['jboss']['home']}/#{node['jboss']['installation_type']}/#{file}.undeployed"].empty?
     puts 'Undeploying'
     sleep 5
   end

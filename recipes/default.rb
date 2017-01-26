@@ -1,5 +1,7 @@
 include_recipe 'java'
 
+package 'unzip'
+
 directory node['jboss']['home']
 
 group 'jboss' do
@@ -16,14 +18,14 @@ user 'jboss' do
 end
 
 if node['jboss']['zip_installer'][0..3] == 'http'
-  remote_file '/tmp/jboss-as.zip' do
+  remote_file "/tmp/#{::File.basename(node['jboss']['zip_installer'])}" do
     source node['jboss']['zip_installer']
   end
-  node.default['jboss']['zip_installer'] = '/tmp/jboss-as.zip'
+  node.default['jboss']['zip_installer'] = "/tmp/#{::File.basename(node['jboss']['zip_installer'])}"
 end
 
 execute 'Unzipping JBoss standalone' do
-  command "unzip #{node['jboss']['zip_installer']} -d #{node['jboss']['home']}"
+  command "unzip #{node['jboss']['zip_installer']} -d {::File.dirname(node['jboss']['home'])}"
   creates "#{node['jboss']['home']}/bin"
 end
 
@@ -32,7 +34,9 @@ template '/etc/init.d/jboss-as' do
   mode '0755'
 end
 
-file '/etc/jboss-as/jboss-as.conf' do
+directory "/etc/jboss-as"
+
+file "/etc/jboss-as/jboss-as.conf" do
   content "
 JBOSS_HOME=#{node['jboss']['home']}
 JBOSS_USER=jboss
@@ -57,9 +61,9 @@ end
 
 service 'jboss-as' do 
   action [:enable, :start]
-  subscribes :restart, 'template[/etc/init.d/jboss-as]'
-  subscribes :restart, 'file[/etc/jboss-as.conf]'
-  subscribes :restart, "template[#{node['jboss']['home']}/standalone/configuration/eforms.xml]"
+  subscribes :restart, 'template[/etc/init.d/jboss-as]', :delayed
+  subscribes :restart, 'file[/etc/jboss-as.conf]', :delayed
+  subscribes :restart, "template[#{node['jboss']['home']}/standalone/configuration/eforms.xml]", :delayed
 end
 
 node['jboss']['ear_files'].each do |ear|

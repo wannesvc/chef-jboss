@@ -1,5 +1,5 @@
 default['jboss']['zip_installer'] = 'http://download.jboss.org/jbossas/7.1/jboss-as-7.1.1.Final/jboss-as-7.1.1.Final.zip'
-default['jboss']['home'] = '/opt/jboss-as'
+default['jboss']['home'] = "/opt/#{::File.basename(node['jboss']['zip_installer']).chomp('.zip')}"
 default['jboss']['installation_type'] = 'standalone'
 default['jboss']['uid'] = 110
 default['jboss']['gid'] = 110
