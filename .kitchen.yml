@@ -15,8 +15,8 @@ suites:
   - name: jboss
     run_list: 
       - recipe[jboss::default]
-    attributes:
-      jboss:
-        ear_files:
-          - '/tmp/HelloWorldApp.ear'
-
+#    attributes:
+#      jboss:
+#        ear_files:
+#          - '/tmp/HelloWorldApp.ear'
+#

@@ -64,7 +64,9 @@ service 'jboss-as' do
 end
 
 node['jboss']['ear_files'].each do |ear|
-  jboss_ear ear
+  jboss_ear ::File.basename(ear) do
+    source_path ::File.dirname(ear)
+  end
 end
 
 node['jboss']['users'].each do |user|

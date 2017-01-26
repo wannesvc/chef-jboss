@@ -5,7 +5,7 @@ default['jboss']['uid'] = 110
 default['jboss']['gid'] = 110
 default['jboss']['ear_files'] = []
 default['jboss']['users'] = [
-  { username: 'admin', password: 'admin'}
+  { username: 'admin', password: 'testtest'}
 ]
 default['jboss']['conf'] = {
   JBOSS_HOME: node['jboss']['home'],
