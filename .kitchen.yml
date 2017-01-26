@@ -1,6 +1,8 @@
 ---
 driver:
   name: vagrant
+  customize:
+    memory: 2048
 
 provisioner:
   name: chef_zero
@@ -14,3 +16,7 @@ suites:
     run_list: 
       - recipe[jboss::default]
     attributes:
+      jboss:
+        ear_files:
+          - '/tmp/HelloWorldApp.ear'
+

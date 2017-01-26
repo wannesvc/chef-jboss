@@ -1,40 +1,44 @@
-resource_name :ear
-property :file, kind_of: String, name_property: true
+#resource_name :ear
+property :ear_file, kind_of: String, name_property: true
 
-#load_current_value do
-#  if ::File.exists?("#{node['jboss']['home']}/#{node['jboss']['installation_type']}/deployments/#{file}")
-#    if ! Dir["#{node['jboss']['home']}/#{node['jboss']['installation_type']}/deployments/#{file}.*"].empty?
-#      Dir["#{node['jboss']['home']}/#{node['jboss']['installation_type']}/deployments/#{file}.*"].first.split('.').last
-#    else
-#      return 'not_deployed'
-#    end
-#  else
-#    return 'not_deployed'
-#  end
-#end
+jboss_path = "#{node['jboss']['home']}/#{node['jboss']['installation_type']}"
+
+load_current_value do
+  if ::File.exists?("#{jboss_path}/deployments/#{ear_file}")
+    if ! Dir["#{jboss_path}/deployments/#{ear_file}.*"].empty?
+      :ear_file ::File.basename("#{jboss_path}/deployments/#{ear_file}")
+    else
+      current_value_does_not_exist!
+    end
+  else
+    current_value_does_not_exist!
+  end
+end
 
 action :deploy do
-  puts "Deploying #{::File.basename(file)}"
-  file ::File.basename("#{node['jboss']['home']}/#{node['jboss']['installation_type']}/#{file}") do
+  puts "Deploying #{::File.basename(ear_file)}"
+  file ::File.basename("#{jboss_path}/#{ear_file}") do
     owner 'jboss'
     group 'jboss'
     mode '0600'
-    content lazy { ::File.open(file).read }
+    content lazy { ::File.open(ear_file).read }
   end
-  while Dir["#{node['jboss']['home']}/#{node['jboss']['installation_type']}/#{file}.deployed"].empty?
-    status = Dir["#{node['jboss']['home']}/#{node['jboss']['installation_type']}/#{file}.*"].first.split['.'].last
-    puts status
-    raise if status == 'failed'
+  while Dir["#{jboss_path}/#{ear_file}.deployed"].empty?
+    if not Dir["#{jboss_path}/#{ear_file}.*"].empty?
+      status = Dir["#{jboss_path}/#{ear_file}.*"].first.split['.'].last
+      puts status
+      raise if status == 'failed'
+    end
     sleep 5
   end
 end
 
 action :undeploy do
-  puts "Undeploying #{::File.basename(file)}"
-  file file do
+  puts "Undeploying #{::File.basename(ear_file)}"
+  file ear_file do
     :delete
   end
-  while Dir["#{node['jboss']['home']}/#{node['jboss']['installation_type']}/#{file}.undeployed"].empty?
+  while Dir["#{jboss_path}/#{ear_file}.undeployed"].empty?
     puts 'Undeploying'
     sleep 5
   end

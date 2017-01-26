@@ -25,7 +25,7 @@ if node['jboss']['zip_installer'][0..3] == 'http'
 end
 
 execute 'Unzipping JBoss standalone' do
-  command "unzip #{node['jboss']['zip_installer']} -d {::File.dirname(node['jboss']['home'])}"
+  command "unzip #{node['jboss']['zip_installer']} -d #{::File.dirname(node['jboss']['home'])}"
   creates "#{node['jboss']['home']}/bin"
 end
 
@@ -37,10 +37,7 @@ end
 directory "/etc/jboss-as"
 
 file "/etc/jboss-as/jboss-as.conf" do
-  content "
-JBOSS_HOME=#{node['jboss']['home']}
-JBOSS_USER=jboss
-"
+  content node['jboss']['conf'].map{|k,v| "#{k}=#{v}"}.join("\n")
 end
 
 file "#{node['jboss']['home']}/bin/standalone.sh" do
@@ -68,4 +65,10 @@ end
 
 node['jboss']['ear_files'].each do |ear|
   jboss_ear ear
+end
+
+node['jboss']['users'].each do |user|
+  jboss_user user[:username] do
+    password user[:password]
+  end
 end

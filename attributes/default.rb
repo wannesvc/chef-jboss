@@ -4,6 +4,13 @@ default['jboss']['installation_type'] = 'standalone'
 default['jboss']['uid'] = 110
 default['jboss']['gid'] = 110
 default['jboss']['ear_files'] = []
+default['jboss']['users'] = [
+  { username: 'admin', password: 'admin'}
+]
+default['jboss']['conf'] = {
+  JBOSS_HOME: node['jboss']['home'],
+  JBOSS_USER: 'jboss'
+}
 
 ### configure the java cookbook to use oracle java 8
 default['java']['jdk_version'] = '8'
