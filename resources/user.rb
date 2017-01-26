@@ -1,5 +1,3 @@
-# TODO: current value is encrypted, we need to encrypt the new value to compare them
-# admin:ManagementRealm:testtest
 require 'digest'
 
 property :username, kind_of: String, name_property: true
@@ -20,6 +18,7 @@ end
 load_current_value do |desired|
   current = ::File.open("#{$jboss_path}/configuration/mgmt-users.properties").grep(/^#{username}=/)
   if not current.empty?
+# admin:ManagementRealm:testtest
     entry = current.first.split('=')
     md5 = Digest::MD5.new
     md5.update("#{entry[0]}:ManagementRealm:#{desired.password}")
