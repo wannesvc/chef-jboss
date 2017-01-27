@@ -20,6 +20,7 @@ end
 if node['jboss']['zip_installer'][0..3] == 'http'
   remote_file "/tmp/#{::File.basename(node['jboss']['zip_installer'])}" do
     source node['jboss']['zip_installer']
+    action :create_if_missing
   end
   node.default['jboss']['zip_installer'] = "/tmp/#{::File.basename(node['jboss']['zip_installer'])}"
 end
@@ -64,8 +65,8 @@ service 'jboss-as' do
 end
 
 node['jboss']['ear_files'].each do |ear|
-  jboss_ear ::File.basename(ear) do
-    source_path ::File.dirname(ear)
+  jboss_ear ear['ear_file'] do
+    source_path ear['source_path']
   end
 end
 

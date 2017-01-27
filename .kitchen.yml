@@ -15,8 +15,8 @@ suites:
   - name: jboss
     run_list: 
       - recipe[jboss::default]
-#    attributes:
-#      jboss:
-#        ear_files:
-#          - '/tmp/HelloWorldApp.ear'
-#
+    attributes:
+      jboss:
+        ear_files:
+          - source_path: 'https://developer.jboss.org/servlet/JiveServlet/download/588885-27216'
+            ear_file: HelloWorld.ear
