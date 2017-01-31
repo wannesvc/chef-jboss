@@ -1,77 +1,14 @@
-include_recipe 'java'
-
-package 'unzip'
-
-directory node['jboss']['home']
-
-group 'jboss' do
-  gid 110
-end
-
-user 'jboss' do
-  comment 'JBoss service user'
-  uid node['jboss']['uid']
-  gid node['jboss']['gid']
-  home node["jboss"]["home"]
-  manage_home false
-  shell '/sbin/nologin'
-end
-
-if node['jboss']['zip_installer'][0..3] == 'http'
-  remote_file "/tmp/#{::File.basename(node['jboss']['zip_installer'])}" do
-    source node['jboss']['zip_installer']
-    action :create_if_missing
-  end
-  node.default['jboss']['zip_installer'] = "/tmp/#{::File.basename(node['jboss']['zip_installer'])}"
-end
-
-execute 'Unzipping JBoss standalone' do
-  command "unzip #{node['jboss']['zip_installer']} -d #{::File.dirname(node['jboss']['home'])}"
-  creates "#{node['jboss']['home']}/bin"
-end
-
-template '/etc/init.d/jboss-as' do
-  source 'jboss-initd.erb'
-  mode '0755'
-end
-
-directory "/etc/jboss-as"
-
-file "/etc/jboss-as/jboss-as.conf" do
-  content node['jboss']['conf'].map{|k,v| "#{k}=#{v}"}.join("\n")
-end
-
-file "#{node['jboss']['home']}/bin/standalone.sh" do
-  mode '0755'
-end
-
-["#{node['jboss']['home']}/standalone/data/content", 
-"#{node['jboss']['home']}/standalone/tmp", 
-"#{node['jboss']['home']}/standalone/log",
-"#{node['jboss']['home']}/standalone/deployments",
-"#{node['jboss']['home']}/standalone/configuration"].each do |dir|
-  directory dir do
-    recursive true
-    owner 'jboss'
-    group 'jboss'
-  end
-end
-
-service 'jboss-as' do 
-  action [:enable, :start]
-  subscribes :restart, 'template[/etc/init.d/jboss-as]', :delayed
-  subscribes :restart, 'file[/etc/jboss-as.conf]', :delayed
-  subscribes :restart, "template[#{node['jboss']['home']}/standalone/configuration/eforms.xml]", :delayed
-end
+jboss_install node['jboss']['version']
 
 node['jboss']['ear_files'].each do |ear|
-  jboss_ear ear['ear_file'] do
-    source_path ear['source_path']
+  jboss_ear ear.split('/').last do
+    source_path ear 
+    deploy_path "#{node['jboss']['home']}/#{node['jboss']['installation_type']}/deployments"
   end
 end
-
 node['jboss']['users'].each do |user|
   jboss_user user[:username] do
     password user[:password]
+    jboss_home node['jboss']['home']
   end
 end

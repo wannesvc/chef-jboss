@@ -8,7 +8,7 @@ provisioner:
   name: chef_zero
 
 platforms:
-  - name: mvbcoding/awslinux
+#  - name: mvbcoding/awslinux
   - name: centos-7.1
 
 suites:
@@ -18,5 +18,4 @@ suites:
     attributes:
       jboss:
         ear_files:
-          - source_path: 'https://developer.jboss.org/servlet/JiveServlet/download/588885-27216'
-            ear_file: HelloWorld.ear
+          - 'https://developer.jboss.org/servlet/JiveServlet/download/588885-27216/HelloWorld.ear'
