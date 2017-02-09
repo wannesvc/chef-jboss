@@ -3,7 +3,7 @@ module Jboss
     def stage_file(src: '', dst:'')
       case src
       when /^s3:\/\//
-        log "Downloading #{::File.basename(src)} from s3"
+        Chef::Log.info "Downloading #{::File.basename(src)} from s3"
         s3_file dst do
           remote_path src[5..-1].split('/')[1..-1].join('/')
           bucket ::File.dirname(src[5..-1])[/^.*?\//].chomp('/')
@@ -11,14 +11,14 @@ module Jboss
           group 'jboss'
         end
       when /^http[s]?:\/\//
-        log "Downloading #{::File.basename(src)} from internet"
+        Chef::Log.info "Downloading #{::File.basename(src)} from internet"
         remote_file dst do
           source src
           owner 'jboss'
           group 'jboss'
         end
       else
-        log "Stage #{::File.basename(src)} locally"
+        Chef::Log.info "Stage #{::File.basename(src)} locally"
         execute "Copy #{src} to /tmp" do
           command "cp -f #{src} #{dst}"
         end
