@@ -35,6 +35,8 @@ action :deploy do
         count = 0
         while Dir["#{deploy_path}/#{ear_file}.deployed"].empty? && count < 10
           unless Dir["#{deploy_path}/#{ear_file}.*"].empty?
+puts '++++++++++++++++++++++++++'
+p  Dir["#{deploy_path}/#{ear_file}.*"]
             status = (Dir["#{deploy_path}/#{ear_file}.*"] - ["#{deploy_path}/#{ear_file}.dodeploy"]).first.split['.'].last
             log status
             raise if status == 'failed'
