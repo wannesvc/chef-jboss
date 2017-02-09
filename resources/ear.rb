@@ -14,7 +14,7 @@ load_current_value do |desired|
     when 'deployed'
       ear_file desired.ear_file
     when 'failed'
-      Chef::log.warn "Previous deploy of #{desired.ear_file} failed, cleaning up" do
+      Chef::Log.warn "Previous deploy of #{desired.ear_file} failed, cleaning up" do
         %x(rm -rf #{desired.deploy_path}/#{desired.ear_file} #{desired.deploy_path}/#{desired.ear_file}.*)
       end
       current_value_does_not_exist!
