@@ -24,10 +24,10 @@ module Jboss
         end
       end
     end
-    def delete_user(username, jboss_home) 
+    def delete_user(username) 
       ['domain', 'standalone'].each do |type|
-        ::File.open("#{jboss_home}/#{type}/configuration/mgmt-users.properties", 'w') do |out_file|
-          ::File.foreach("#{jboss_home}/#{type}/configuration/mgmt-users.properties", 'w') do |line|
+        ::File.open("#{node['jboss']['home']}/#{type}/configuration/mgmt-users.properties", 'w') do |out_file|
+          ::File.foreach("#{node['jboss']['home']}/#{type}/configuration/mgmt-users.properties", 'w') do |line|
             out_file.puts line unless line =~ /^username=/
           end
         end
@@ -35,8 +35,8 @@ module Jboss
     end
     def add_user(username, password, type)
       execute "Adding #{type} #{username}" do
-        command "#{jboss_home}/bin/add-user.sh --silent=true #{username} #{password} > /tmp/capture.log 2>&1"
-        not_if { not ::File.open("#{jboss_home}/standalone/configuration/mgmt-users.properties").grep(/^#{username}=/).empty? }
+        command "#{node['jboss']['home']}/bin/add-user.sh --silent=true #{username} #{password} > /tmp/capture.log 2>&1"
+        not_if { not ::File.open("#{node['jboss']['home']}/standalone/configuration/mgmt-users.properties").grep(/^#{username}=/).empty? }
         sensitive true
       end
     end
@@ -47,8 +47,8 @@ module Jboss
       md5.update("#{username}:#{realm}:#{password}")
       md5.hexdigest
     end
-    def get_current_password(username, jboss_home)
-      current = ::File.open("#{jboss_home}/standalone/configuration/mgmt-users.properties").grep(/^#{username}=/)
+    def get_current_password(username)
+      current = ::File.open("#{node['jboss']['home']}/standalone/configuration/mgmt-users.properties").grep(/^#{username}=/)
       if not current.empty?
         entry = current.first.split('=')
         entry[1].chomp("\n")

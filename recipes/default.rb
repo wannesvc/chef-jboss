@@ -1,4 +1,4 @@
-jboss_install node['jboss']['version']
+#jboss_install node['jboss']['version']
 
 node['jboss']['ear_files'].each do |ear|
   jboss_ear ear.split('/').last do
@@ -9,6 +9,5 @@ end
 node['jboss']['users'].each do |user|
   jboss_user user[:username] do
     password user[:password]
-    jboss_home node['jboss']['home']
   end
 end
