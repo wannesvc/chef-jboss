@@ -33,7 +33,7 @@ action :deploy do
     ruby_block "Waiting for deployment of #{ear_file}" do
       block do
         count = 0
-        while Dir["#{deploy_path}/#{ear_file}.deployed"].empty? && count < 10
+        while Dir["#{deploy_path}/#{ear_file}.deployed"].empty? && count < 100
           unless Dir["#{deploy_path}/#{ear_file}.*"].empty?
             status = (Dir["#{deploy_path}/#{ear_file}.*"] - ["#{deploy_path}/#{ear_file}.dodeploy"]).first.split('.').last
             log status
@@ -41,7 +41,7 @@ action :deploy do
           end
           sleep 5
           count += 1
-          if count == 9
+          if count == 99
             log "Timeout waiting for deployment. Is Jboss running?" do
               level :warn
             end
